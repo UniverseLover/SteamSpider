@@ -1,4 +1,5 @@
 import requests as r
+import logging
 
 
 def get_html(_id):
@@ -19,10 +20,9 @@ def get_html(_id):
         'Cache-Control': 'max-age=0'
     }
     try:
-        i = 0
-        while i<3:
+        for i in range(3):
             try:
-                res = r.get(url, headers=headers,allow_redirects=False)
+                res = r.get(url, headers=headers, allow_redirects=False)
                 if res.status_code == 200:
                     return res.text
                 else:
@@ -30,15 +30,13 @@ def get_html(_id):
             except r.exceptions.RequestException:
                 i += 1
     except Exception as e:
-        print(e)
-
-    
+        logging.warning(e.__str__())
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
 
-    with open('./_test/test_html.py','w',encoding='utf-8') as f:
+    with open('./_test/test_html.py', 'w', encoding='utf-8') as f:
         f.write("test_html = '''")
-        f.write(get_html(271590))
+        f.write(get_html(291750))
         f.write("'''")
         print('Done.')

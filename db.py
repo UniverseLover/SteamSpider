@@ -1,7 +1,7 @@
 import pymongo
 import logging
 
-db_url = "mongodb://127.0.0.1:27017"
+db_url = "mongodb://47.107.109.43:52613"
 
 client = pymongo.MongoClient(db_url)
 
@@ -15,7 +15,7 @@ def storage(bson):
     try:
         game_col.insert(bson)
     except Exception as e:
-        logging.warn(e)
+        logging.warning(e.__str__())
 
 def test_storage(bson):
 
