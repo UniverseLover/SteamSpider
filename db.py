@@ -1,7 +1,7 @@
 import pymongo
 import logging
 
-db_url = "mongodb://47.107.109.43:52613"
+db_url = "mongodb:/loacalhosts:{your_port}"
 
 client = pymongo.MongoClient(db_url)
 
