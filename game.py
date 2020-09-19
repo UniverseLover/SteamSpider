@@ -17,6 +17,8 @@ class UnsupportTypeException(Exception):
 
 class Game:
 
+    BrokenGame = Game(-1,1)
+
     def __init__(self, app_id, err=None):
 
         self.app_id = app_id
@@ -76,12 +78,12 @@ class Game:
             except UnsupportTypeException:
                 logging.debug(
                     'Unsurpport type!May be DLC or locked game.[app_id={}]'.format(_id))
-                return Game(_id, UnsupportTypeException)
+                return Game.BrokenGame
             except Exception as e:
                 logging.warning(e.__str__()+'[app_id={}]'.format(_id))
-                return Game(_id, ParseException)
+                return Game.BrokenGame
         else:
-            return Game(_id, RequestException)
+            return Game.BrokenGame
 
     def get_json(self):
         self.__delattr__('err')

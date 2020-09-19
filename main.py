@@ -68,7 +68,7 @@ def press_test():
                 for ix, i in enumerate(start_li):
                     t = pool.submit(run, i, i+unit, ix, 0, True)
         toc = time.time()
-        tictoc = (toc - tic)/3
+        tictoc = (toc - tic)/5
         if tictoc > last_time:
             if thread_count == 2:
                 print("It's strange,but it's science!")
@@ -81,4 +81,4 @@ def press_test():
 
 if __name__ == '__main__':
     print("Welcome to Steam Spider!(version=0.9)")
-    main()
+    press_test()
