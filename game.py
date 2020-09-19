@@ -1,7 +1,6 @@
-from bs4 import BeautifulSoup
-
-
 import logging
+
+from bs4 import BeautifulSoup
 
 
 class RequestException(Exception):
@@ -92,7 +91,7 @@ class Game:
 def get_summary(soup):
     sm = soup.find_all(
         'span', class_='game_review_summary')
-    return [i.getText() for i in sm] if len(sm) == 2 else (None, None)
+    return [i.getText() for i in sm][:2] if len(sm) >= 2 else (None, None)
 
 
 def get_price(soup):
@@ -112,15 +111,18 @@ def get_price(soup):
         return
 
 
-def in_category(cate, info):
+def get_in_category_judgement_function(cate):
 
-    if not cate:
+    def in_category(info):
+        if not cate:
+            return False
+
+        for i in cate.find_all('a', class_='name'):
+            if i.getText().strip() == info:
+                return True
         return False
 
-    for i in cate.find_all('a', class_='name'):
-        if i.getText().strip() == info:
-            return True
-    return False
+    return in_category
 
 
 def get_chinese_support(soup):
@@ -135,13 +137,13 @@ def get_chinese_support(soup):
         if tr.find('td', class_='ellipsis') and tr.find('td', class_='ellipsis').getText().strip() == '简体中文':
             chs_tr = tr
             for td in chs_tr.find_all('td', class_='checkcol'):
-                chs_li.append(1 if td.getText().strip() == '✔' else 0)
+                chs_li.append('1' if td.getText().strip() == '✔' else '0')
             break
 
     if len(chs_li) != 3:
         return 0
 
-    return chs_li[0]*4+chs_li[1]*2+chs_li[2]
+    return int(''.join(chs_li),base=2)
 
 
 def parse_html(_id, html):
@@ -168,37 +170,37 @@ def parse_html(_id, html):
         'div', id='developers_list') else []
     raw.publishers = [i.getText() for i in soup.find_all('div', class_='dev_row')[
         1].find_all('a')] if len(soup.find_all('div', class_='dev_row')
-         )==2 else []
+                                 ) == 2 else []
     raw.tags = [i.getText().strip()
                 for i in soup.find_all('a', class_='app_tag')]
     raw.is_ea = bool(soup.find('div', class_='early_access_header'))
 
     cate = soup.find('div', id='category_block')
+    in_category = get_in_category_judgement_function(cate)
 
-    raw.singleplay = in_category(cate, '单人')
-    raw.online_pvp = in_category(cate, '线上玩家对战')
-    raw.online_pve = in_category(cate, '在线玩家合作')
-    raw.local_pvp = in_category(cate, '共享/分屏玩家对战')
-    raw.local_pve = in_category(cate, '共享/分屏合作')
-    raw.lan_pvp = in_category(cate, '局域网玩家对战')
-    raw.lan_pve = in_category(cate, '局域网合作')
-    raw.cross_platfrom_support = in_category(cate, '跨平台联机游戏')
-    raw.inner_cart = in_category(cate, '应用内购买')
-    raw.has_vac = in_category(cate, '启用 Valve 反作弊保护')
-    raw.has_cloud = in_category(cate, 'Steam 云')
-    raw.workshop_support = in_category(cate, 'Steam 创意工坊')
-    raw.controller_support = in_category(cate, '完全支持控制器')
-    raw.has_achievement = in_category(cate, 'Steam 成就')
-    raw.steam_card = in_category(cate, 'Steam 集换式卡牌')
-    raw.tv_streaming_support = in_category(cate, '在电视上远程畅玩')
-    raw.pad_streaming_support = in_category(cate, '在平板上远程畅玩')
-    raw.phone_streaming_support = in_category(cate, '在手机上远程畅玩')
-    raw.remote_play_together = in_category(cate, '远程同乐')
-
-    raw.statistic_data = in_category(cate, '统计数据')
-    raw.editor_support = in_category(cate, '包含关卡编辑器')
-    raw.cc_support = in_category(cate, '支持字幕')
-    raw.commentary_support = in_category(cate, '解说可用')
+    raw.singleplay = in_category('单人')
+    raw.online_pvp = in_category('线上玩家对战')
+    raw.online_pve = in_category('在线玩家合作')
+    raw.local_pvp = in_category('共享/分屏玩家对战')
+    raw.local_pve = in_category('共享/分屏合作')
+    raw.lan_pvp = in_category('局域网玩家对战')
+    raw.lan_pve = in_category('局域网合作')
+    raw.cross_platfrom_support = in_category('跨平台联机游戏')
+    raw.inner_cart = in_category('应用内购买')
+    raw.has_vac = in_category('启用 Valve 反作弊保护')
+    raw.has_cloud = in_category('Steam 云')
+    raw.workshop_support = in_category('Steam 创意工坊')
+    raw.controller_support = in_category('完全支持控制器')
+    raw.has_achievement = in_category('Steam 成就')
+    raw.steam_card = in_category('Steam 集换式卡牌')
+    raw.tv_streaming_support = in_category('在电视上远程畅玩')
+    raw.pad_streaming_support = in_category('在平板上远程畅玩')
+    raw.phone_streaming_support = in_category('在手机上远程畅玩')
+    raw.remote_play_together = in_category('远程同乐')
+    raw.statistic_data = in_category('统计数据')
+    raw.editor_support = in_category('包含关卡编辑器')
+    raw.cc_support = in_category('支持字幕')
+    raw.commentary_support = in_category('解说可用')
 
     raw.vr_support = bool(soup.find('div', class_='block_title vrsupport'))
     raw.has_drm = bool(soup.find('div', class_='DRM_notice'))
@@ -208,6 +210,7 @@ def parse_html(_id, html):
 
 
 if __name__ == '__main__':
+
     from _test.test_html import test_html
 
     game = Game.getGameByHtml(271590, test_html)

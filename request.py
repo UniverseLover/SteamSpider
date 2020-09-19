@@ -37,6 +37,6 @@ if __name__ == '__main__':
 
     with open('./_test/test_html.py', 'w', encoding='utf-8') as f:
         f.write("test_html = '''")
-        f.write(get_html(291750))
+        f.write(get_html(271590))
         f.write("'''")
         print('Done.')
