@@ -19,18 +19,17 @@ def get_html(_id):
         'DNT': '1',
         'Cache-Control': 'max-age=0'
     }
-    try:
-        for i in range(3):
-            try:
-                res = r.get(url, headers=headers, allow_redirects=False)
-                if res.status_code == 200:
-                    return res.text
-                else:
-                    break
-            except r.exceptions.RequestException:
-                i += 1
-    except Exception as e:
-        logging.warning(e.__str__())
+
+    for i in range(3):
+        try:
+            res = r.get(url, headers=headers, allow_redirects=False)
+            if res.status_code == 200:
+                return res.text
+            else:
+                break
+        except r.exceptions.RequestException as e:
+            logging.warning(e.__str__())
+
 
 
 if __name__ == '__main__':

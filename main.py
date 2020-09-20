@@ -18,7 +18,7 @@ start_li = [start+i*unit for i in range(thread_count)]
 logging.basicConfig(level=logging.INFO)
 
 
-def run(start, end, woker_id, time_verbose=0, press_test=False):
+def run(start, end, woker_id, time_verbose, press_test=False):
 
     tic = time.time()
 
@@ -80,5 +80,5 @@ def press_test():
 
 
 if __name__ == '__main__':
-    print("Welcome to Steam Spider!(version=0.9)")
-    press_test()
+    print("Welcome to Steam Spider!(version=1.0)")
+    main()

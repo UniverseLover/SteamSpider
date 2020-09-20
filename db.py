@@ -2,8 +2,8 @@ import logging
 
 import pymongo
 
-IP = '47.107.109.43'
-PORT = 52613
+IP = 'localhost'
+PORT = 27017
 
 db_url = "mongodb://{}:{}".format(IP,PORT)
 
