@@ -31,7 +31,7 @@ def run(start, end, woker_id, time_verbose, press_test=False):
                     woker_id, i, 100*(i-start)/(end-start)))
             html = get_html(i)
             game = Game.getGameByHtml(i, html)
-            if game.err:
+            if not game:
                 continue
             bson = game.get_json()
             if not press_test:

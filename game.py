@@ -17,12 +17,10 @@ class UnsupportTypeException(Exception):
 
 class Game:
 
-    BrokenGame = Game(-1,1)
 
-    def __init__(self, app_id, err=None):
+    def __init__(self, app_id):
 
         self.app_id = app_id
-        self.err = err
         self.name = None
         self.description = None
         self.summary_lately = None
@@ -67,7 +65,7 @@ class Game:
 
     def __str__(self):
 
-        return '\n'.join(['{}:{}'.format(i, self.__getattribute__(i)) for i in self.__dict__ if i != 'err'])
+        return '\n'.join(['{}:{}'.format(i, self.__getattribute__(i)) for i in self.__dict__])
 
     @classmethod
     def getGameByHtml(cls, _id, html):
@@ -78,15 +76,14 @@ class Game:
             except UnsupportTypeException:
                 logging.debug(
                     'Unsurpport type!May be DLC or locked game.[app_id={}]'.format(_id))
-                return Game.BrokenGame
+                return
             except Exception as e:
                 logging.warning(e.__str__()+'[app_id={}]'.format(_id))
-                return Game.BrokenGame
+                return
         else:
-            return Game.BrokenGame
+            return
 
     def get_json(self):
-        self.__delattr__('err')
         return {i: self.__dict__[i] for i in self.__dict__}
 
 
@@ -145,7 +142,7 @@ def get_chinese_support(soup):
     if len(chs_li) != 3:
         return 0
 
-    return int(''.join(chs_li),base=2)
+    return int(''.join(chs_li), base=2)
 
 
 def parse_html(_id, html):
